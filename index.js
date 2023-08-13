@@ -1,6 +1,6 @@
 import express, { json, urlencoded } from "express";
-import db from "./config/connection";
-import routes from "./routes";
+import db from "./config/connection.js";
+import routes from "./routes/index.js";
 
 const app = express();
 const PORT = process.env.PORT || 3001;

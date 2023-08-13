@@ -1,4 +1,4 @@
-import { Schema, model } from "mongoose";
+const { Schema, model } = require("mongoose");
 
 const ThoughtSchema = new Schema(
     {
@@ -70,4 +70,4 @@ const ReactionSchema = new Schema(
 const Thought = model("Thought", ThoughtSchema);
 
 // export the Thought model
-export default Thought;
+module.exports = Thought;

@@ -1,4 +1,4 @@
-import { User, Thought } from "../models";
+const { User, Thought } = require("../models");
 
 // Create the thoughtController object
 const thoughtController = {
@@ -163,4 +163,4 @@ const thoughtController = {
 };
 
 // export the thoughtController object
-export default thoughtController;
+module.exports = thoughtController;

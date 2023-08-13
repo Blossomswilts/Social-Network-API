@@ -1,5 +1,5 @@
 // Call user and thought models
-import { User, Thought } from "../models";
+const { User, Thought } = require("../models");
 
 // Create the userController object try catch
 const userController = {
@@ -130,4 +130,4 @@ const userController = {
 };
 
 // export the userController object
-export default userController;
+module.exports = userController;
