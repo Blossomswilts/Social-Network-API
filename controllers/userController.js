@@ -1,5 +1,5 @@
 // Call user and thought models
-const { User, Thought } = require("../models");
+const { User, Thought } = require("../models/User");
 
 // Create the userController object try catch
 const userController = {
