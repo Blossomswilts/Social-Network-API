@@ -35,10 +35,10 @@ ThoughtSchema.virtual('reactionCount').get(function () {
 }
 );
 
-//create a ReactionSchema
+//create a ReactionSchema which is used as reaction field's sub-document schema in ThoughtSchema
 const ReactionSchema = new Schema(
     {
-        // set custom id to avoid confusion with parent comment's _id field
+        // set custom id to avoid confusion with parent thought's _id field
         reactionId: {
             type: Schema.Types.ObjectId,
             default: () => new Types.ObjectId()
@@ -52,7 +52,7 @@ const ReactionSchema = new Schema(
             type: String,
             required: true
         },
-        // set createdAt to a Date value and default it to the current timestamp
+        // set a timestamp on creation
         createdAt: {
             type: Date,
             default: Date.now,
