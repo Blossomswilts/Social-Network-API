@@ -1,47 +1,47 @@
-import { Schema, model } from 'mongoose';
+import { Schema, model } from "mongoose";
 
-const UserSchema = new Schema({
-    username: {
-        type: String,
-        required: true,
-        unique: true,
-        trim: true // removes whitespace
+const UserSchema = new Schema(
+    {
+        username: {
+            type: String,
+            required: true,
+            unique: true,
+            trim: true, // removes whitespace
+        },
+        email: {
+            type: String,
+            required: true,
+            unique: true,
+            match: [/.+@.+\..+/], // regex for email simple validation
+        },
+        thoughts: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: "Thought",
+            },
+        ],
+        friends: [
+            {
+                type: Schema.Types.ObjectId,
+                ref: "User",
+            },
+        ],
     },
-    email: {
-        type: String,
-        required: true,
-        unique: true,
-        match: [/.+@.+\..+/] // regex for email simple validation
-    },
-    thoughts: [
-        {
-            type: Schema.Types.ObjectId,
-            ref: 'Thought'
-        }
-    ],
-    friends: [
-        {
-            type: Schema.Types.ObjectId,
-            ref: 'User'
-        }
-    ]
-},
     {
         toJSON: {
-            virtuals: true
+            virtuals: true,
         },
-        id: false
+        id: false,
     }
 );
 
 // get total count of friends on retrieval
-UserSchema.virtual('friendCount').get(function () {
+UserSchema.virtual("friendCount").get(function () {
     return this.friends.length;
-}
-);
+});
 
 // create the User model using the UserSchema
-const User = model('User', UserSchema);
+const User = model("User", UserSchema);
 
 // export the User model
 export default User;
