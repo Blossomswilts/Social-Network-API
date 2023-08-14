@@ -1,4 +1,5 @@
 const { Schema, model } = require("mongoose");
+const dateFormat = require("../utils/dateFormat");
 
 //create a ReactionSchema which is used as reaction field's sub-document schema in ThoughtSchema
 const ReactionSchema = new Schema(
@@ -75,4 +76,4 @@ ThoughtSchema.virtual("reactionCount").get(function () {
 const Thought = model("Thought", ThoughtSchema);
 
 // export the Thought model
-module.exports = Thought;
+module.exports = { Thought };
