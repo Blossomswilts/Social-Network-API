@@ -1,133 +1,137 @@
-// Call user and thought models
-const { User, Thought } = require("../models/User");
+// Require User model
+const User = require("../models/User");
 
-// Create the userController object try catch
+// Create userController object
 const userController = {
-    // get all users
-    getAllUsers(req, res) {
-        User.find({})
-            .populate({
-                path: "thoughts",
-                select: "-__v", // don't need the __v field on thoughts
-            })
-            .select("-__v") // don't need the __v field on users
-            .sort({ _id: -1 }) // sort in DESC order by the _id value
-            .then((dbUserData) => res.json(dbUserData))
-            .catch((err) => {
-                console.log(err);
-                res.sendStatus(400);
-            });
-    },
-    // get one user by id
-    getUserById({ params }, res) {
-        User.findOne({ _id: params.id })
-            .populate({
-                path: "thoughts", // populate thoughts
-                select: "-__v", // don't need the __v field on thoughts
-            })
-            .select("-__v") // don't need the __v field on users
-            .then((dbUserData) => {
-                // If no user is found, send 404
-                if (!dbUserData) {
-                    res.status(404).json({
-                        message: "No user found with this id!",
-                    });
-                    return;
-                }
-                // If user is found, send 200
-                res.json(dbUserData);
-            })
-            .catch((err) => {
-                console.log(err);
-                res.sendStatus(400);
-            });
+    // GET all users
+    async getAllUsers(req, res) {
+        try {
+            const users = await User.find({})
+                .populate("thoughts")
+                .select("-__v")
+                .sort({ _id: -1 });
+
+            res.json(users);
+        } catch (err) {
+            console.log(err);
+            res.status(500).json(err);
+        }
     },
 
-    // create user
-    createUser({ body }, res) {
-        User.create(body)
-            .then((dbUserData) => res.json(dbUserData))
-            .catch((err) => res.json(err));
+    // GET a single user by ID
+    async getUserById(req, res) {
+        try {
+            const user = await User.findOne({ _id: req.params.id })
+                .populate("thoughts")
+                .select("-__v");
+
+            if (!user) {
+                return res
+                    .status(404)
+                    .json({ message: "No user with that ID" });
+            }
+
+            res.json(user);
+        } catch (err) {
+            console.log(err);
+            res.status(500).json(err);
+        }
     },
 
-    // update user by id
-    updateUser({ params, body }, res) {
-        User.findOne({ _id: params.id }),
-            body,
-            { new: true, runValidators: true }
-                .then((dbUserData) => {
-                    // If no user is found, send 404
-                    if (!dbUserData) {
-                        res.status(404).json({
-                            message: "No user found with this id!",
-                        });
-                        return;
-                    }
-                    // If user is found, send 200
-                    res.json(dbUserData);
-                })
-                .catch((err) => res.json(err));
+    // POST a new user
+    async createUser(req, res) {
+        try {
+            const user = await User.create(req.body);
+            res.json(user);
+        } catch (err) {
+            console.log(err);
+            res.status(500).json(err);
+        }
     },
 
-    // delete user
-    deleteUser({ params }, res) {
-        User.findOneAndDelete({ _id: params.id })
-            .then((dbUserData) => {
-                // If no user is found, send 404
-                if (!dbUserData) {
-                    res.status(404).json({
-                        message: "No user found with this id!",
-                    });
-                    return;
-                }
-                // If user is found, send 200
-                res.json(dbUserData);
-            })
-            .catch((err) => res.json(err));
+    // PUT update user by ID
+    async updateUser(req, res) {
+        try {
+            const user = await User.findOneAndUpdate(
+                { _id: req.params.id },
+                req.body,
+                { new: true, runValidators: true }
+            );
+
+            if (!user) {
+                return res
+                    .status(404)
+                    .json({ message: "No user with this id!" });
+            }
+
+            res.json(user);
+        } catch (err) {
+            console.log(err);
+            res.status(500).json(err);
+        }
     },
 
-    // add friend
-    addFriend({ params }, res) {
-        User.findOneAndUpdate(
-            { _id: params.id },
-            { $push: { friends: params.friendId } },
-            { new: true, runValidators: true }
-        )
-            .then((dbUserData) => {
-                // If no user is found, send 404
-                if (!dbUserData) {
-                    res.status(404).json({
-                        message: "No user found with this id!",
-                    });
-                    return;
-                }
-                // If user is found, send 200
-                res.json(dbUserData);
-            })
-            .catch((err) => res.json(err));
+    // DELETE a user
+    async deleteUser(req, res) {
+        try {
+            const user = await User.findOneAndDelete({ _id: req.params.id });
+
+            if (!user) {
+                return res
+                    .status(404)
+                    .json({ message: "No user with this id" });
+            }
+
+            res.json(user);
+        } catch (err) {
+            console.log(err);
+            res.status(500).json(err);
+        }
     },
 
-    // remove friend
-    removeFriend({ params }, res) {
-        User.findOneAndUpdate(
-            { _id: params.id },
-            { $pull: { friends: params.friendId } },
-            { new: true, runValidators: true }
-        )
-            .then((dbUserData) => {
-                // If no user is found, send 404
-                if (!dbUserData) {
-                    res.status(404).json({
-                        message: "No user found with this id!",
-                    });
-                    return;
-                }
-                // If user is found, send 200
-                res.json(dbUserData);
-            })
-            .catch((err) => res.json(err));
+    // Add a friend
+    async addFriend(req, res) {
+        try {
+            const user = await User.findOneAndUpdate(
+                { _id: req.params.userId },
+                { $addToSet: { friends: req.params.friendId } },
+                { new: true }
+            );
+
+            if (!user) {
+                return res
+                    .status(404)
+                    .json({ message: "No user found with this userId" });
+            }
+
+            res.json(user);
+        } catch (err) {
+            console.log(err);
+            res.status(500).json(err);
+        }
+    },
+
+    // Remove a friend
+    async removeFriend(req, res) {
+        try {
+            const user = await User.findOneAndUpdate(
+                { _id: req.params.userId },
+                { $pull: { friends: req.params.friendId } },
+                { new: true }
+            );
+
+            if (!user) {
+                return res
+                    .status(404)
+                    .json({ message: "No user found with this userId" });
+            }
+
+            res.json(user);
+        } catch (err) {
+            console.log(err);
+            res.status(500).json(err);
+        }
     },
 };
 
-// export the userController object
 module.exports = userController;
