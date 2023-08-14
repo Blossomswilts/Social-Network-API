@@ -1,11 +1,13 @@
-const { Thought } = require("../models/Thought");
 const { User } = require("../models/User");
+const { Thought } = require("../models/Thought");
 
 // Object of thought methods
 const thoughtController = {
     async getAllThoughts(req, res) {
         try {
-            const thoughts = await Thought.find({})
+            const thoughts = await Thought.find({});
+            console
+                .log(thoughts)
                 .populate("reactions")
                 .select("-__v")
                 .sort({ _id: -1 });
@@ -42,7 +44,7 @@ const thoughtController = {
             // Update user's thoughts array field for new thought
             const user = await User.findOneAndUpdate(
                 { _id: req.body.userId },
-                { $push: { thoughts: thought._id } },
+                { $addToSet: { thoughts: thought._id } },
                 { new: true }
             );
 

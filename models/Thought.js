@@ -50,7 +50,12 @@ const ThoughtSchema = new Schema(
             type: String,
             required: true,
         },
-        // use ReplySchema to validate data for a reply
+        userId: {
+            type: Schema.Types.ObjectId,
+            required: true,
+            ref: "User",
+        },
+        // use ReactionSchema to validate data for a reaction
         reactions: [ReactionSchema],
     },
     {
