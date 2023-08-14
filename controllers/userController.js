@@ -1,9 +1,7 @@
-// Require User model
 const User = require("../models/User");
 
-// Create userController object
+// Object of user methods
 const userController = {
-    // GET all users
     async getAllUsers(req, res) {
         try {
             const users = await User.find({})
@@ -18,7 +16,6 @@ const userController = {
         }
     },
 
-    // GET a single user by ID
     async getUserById(req, res) {
         try {
             const user = await User.findOne({ _id: req.params.id })
@@ -38,7 +35,6 @@ const userController = {
         }
     },
 
-    // POST a new user
     async createUser(req, res) {
         try {
             const user = await User.create(req.body);
@@ -49,7 +45,6 @@ const userController = {
         }
     },
 
-    // PUT update user by ID
     async updateUser(req, res) {
         try {
             const user = await User.findOneAndUpdate(
@@ -71,7 +66,6 @@ const userController = {
         }
     },
 
-    // DELETE a user
     async deleteUser(req, res) {
         try {
             const user = await User.findOneAndDelete({ _id: req.params.id });
@@ -89,9 +83,9 @@ const userController = {
         }
     },
 
-    // Add a friend
     async addFriend(req, res) {
         try {
+            // Add friendId to userId's friend list
             const user = await User.findOneAndUpdate(
                 { _id: req.params.userId },
                 { $addToSet: { friends: req.params.friendId } },
@@ -111,10 +105,10 @@ const userController = {
         }
     },
 
-    // Remove a friend
     async removeFriend(req, res) {
         try {
             const user = await User.findOneAndUpdate(
+                // Remove friendId from userId's friend list
                 { _id: req.params.userId },
                 { $pull: { friends: req.params.friendId } },
                 { new: true }
