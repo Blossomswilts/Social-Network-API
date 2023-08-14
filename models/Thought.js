@@ -1,4 +1,4 @@
-const { Schema, model } = require("mongoose");
+const { Schema, model, Types } = require("mongoose");
 const dateFormat = require("../utils/dateFormat");
 
 //create a ReactionSchema which is used as reaction field's sub-document schema in ThoughtSchema

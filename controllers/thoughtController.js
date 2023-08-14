@@ -5,9 +5,7 @@ const { Thought } = require("../models/Thought");
 const thoughtController = {
     async getAllThoughts(req, res) {
         try {
-            const thoughts = await Thought.find({});
-            console
-                .log(thoughts)
+            const thoughts = await Thought.find({})
                 .populate("reactions")
                 .select("-__v")
                 .sort({ _id: -1 });
@@ -95,14 +93,14 @@ const thoughtController = {
                 { new: true }
             );
             //Validate user and thought to remove
-            if (!user) {
-                return res
-                    .status(404)
-                    .json({ message: "No user with this id!" });
-            } else if (!thought) {
+            if (!thought) {
                 return res
                     .status(404)
                     .json({ message: "No thought with this id!" });
+            } else if (!user) {
+                return res
+                    .status(404)
+                    .json({ message: "No user with this id!" });
             }
 
             res.json(thought);
